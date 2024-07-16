@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing interests.
+ */
 @RestController
 @RequestMapping("/interests")
 public class InterestController {
@@ -19,28 +22,48 @@ public class InterestController {
     @Autowired
     private InterestService interestService;
 
+    /**
+     * Get all interests.
+     * 
+     * @return A ResponseEntity containing a list of all interests.
+     */
     @GetMapping
-    public ResponseEntity<Page<Interest>> getAllInterests(
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam(required = false) String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, sortBy == null ? Sort.unsorted() : Sort.by(sortBy));
-        Page<Interest> interests = interestService.getAllInterests(pageRequest);
+    public ResponseEntity<List<Interest>> getAllInterests() {
+        List<Interest> interests = interestService.getAllInterests();
         return ResponseEntity.ok(interests);
     }
 
+    /**
+     * Create a new interest.
+     * 
+     * @param interest The interest to create.
+     * @return A ResponseEntity containing the created interest and HTTP status CREATED.
+     */
     @PostMapping
     public ResponseEntity<Interest> createInterest(@RequestBody Interest interest) {
         Interest createdInterest = interestService.saveInterest(interest);
         return new ResponseEntity<>(createdInterest, HttpStatus.CREATED);
     }
 
+    /**
+     * Update an existing interest.
+     * 
+     * @param id The ID of the interest to update.
+     * @param interestDetails The updated interest details.
+     * @return A ResponseEntity containing the updated interest.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Interest> updateInterest(@PathVariable Long id, @RequestBody Interest interestDetails) {
         Interest updatedInterest = interestService.updateInterest(id, interestDetails);
         return ResponseEntity.ok(updatedInterest);
     }
 
+    /**
+     * Delete an interest.
+     * 
+     * @param id The ID of the interest to delete.
+     * @return A ResponseEntity with HTTP status NO_CONTENT.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInterest(@PathVariable Long id) {
         interestService.deleteInterest(id);

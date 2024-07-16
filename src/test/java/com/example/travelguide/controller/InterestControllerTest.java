@@ -4,86 +4,71 @@ import com.example.travelguide.model.Interest;
 import com.example.travelguide.service.InterestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(InterestController.class)
-public class InterestControllerTest {
+class InterestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private InterestService interestService;
 
-    @Test
-    void testGetAllInterests() throws Exception {
-        Interest interest = new Interest();
-        interest.setId(1L);
-        interest.setName("Hiking");
+    @InjectMocks
+    private InterestController interestController;
 
-        Page<Interest> page = new PageImpl<>(Collections.singletonList(interest));
-        Mockito.when(interestService.getAllInterests(any(PageRequest.class))).thenReturn(page);
+    private MockMvc mockMvc;
 
-        mockMvc.perform(get("/interests")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .param("sortBy", "name"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].name").value(interest.getName()));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(interestController).build();
     }
 
     @Test
-    void testCreateInterest() throws Exception {
-        Interest interest = new Interest();
-        interest.setName("Skiing");
+    void getAllInterests() throws Exception {
+        when(interestService.getAllInterests()).thenReturn(Collections.singletonList(new Interest(1L, "Hiking", "Mountain hiking")));
 
-        Mockito.when(interestService.saveInterest(any(Interest.class))).thenReturn(interest);
+        mockMvc.perform(get("/interests"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Hiking"));
+    }
+
+    @Test
+    void createInterest() throws Exception {
+        Interest interest = new Interest(1L, "Hiking", "Mountain hiking");
+        when(interestService.saveInterest(any(Interest.class))).thenReturn(interest);
 
         mockMvc.perform(post("/interests")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Skiing\"}"))
+                        .content("{\"name\":\"Hiking\",\"description\":\"Mountain hiking\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(interest.getName()));
+                .andExpect(jsonPath("$.name").value("Hiking"));
     }
 
     @Test
-    void testUpdateInterest() throws Exception {
-        Interest interest = new Interest();
-        interest.setId(1L);
-        interest.setName("Climbing");
-
-        Mockito.when(interestService.updateInterest(anyLong(), any(Interest.class))).thenReturn(interest);
+    void updateInterest() throws Exception {
+        Interest interest = new Interest(1L, "Hiking", "Mountain hiking");
+        when(interestService.updateInterest(any(Long.class), any(Interest.class))).thenReturn(interest);
 
         mockMvc.perform(put("/interests/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Climbing\"}"))
+                        .content("{\"name\":\"Hiking\",\"description\":\"Mountain hiking\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(interest.getName()));
+                .andExpect(jsonPath("$.name").value("Hiking"));
     }
 
     @Test
-    void testDeleteInterest() throws Exception {
-        Mockito.doNothing().when(interestService).deleteInterest(anyLong());
-
+    void deleteInterest() throws Exception {
         mockMvc.perform(delete("/interests/1"))
                 .andExpect(status().isNoContent());
     }

@@ -5,6 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Entity class representing a travel destination.
+ */
 @Entity
 public class Destination {
 
@@ -15,18 +18,31 @@ public class Destination {
     private String description;
     private String additionalInfo;
 
-    // Конструктор по умолчанию
+    /**
+     * Default constructor.
+     */
     public Destination() {
     }
 
-    // Конструктор с тремя параметрами
+    /**
+     * Constructor with three parameters.
+     * @param id the ID of the destination.
+     * @param name the name of the destination.
+     * @param description the description of the destination.
+     */
     public Destination(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    // Конструктор с четырьмя параметрами
+    /**
+     * Constructor with four parameters.
+     * @param id the ID of the destination.
+     * @param name the name of the destination.
+     * @param description the description of the destination.
+     * @param additionalInfo additional information about the destination.
+     */
     public Destination(Long id, String name, String description, String additionalInfo) {
         this.id = id;
         this.name = name;
@@ -34,7 +50,7 @@ public class Destination {
         this.additionalInfo = additionalInfo;
     }
 
-    // Геттеры и сеттеры
+    // Getters and Setters
     public Long getId() {
         return id;
     }

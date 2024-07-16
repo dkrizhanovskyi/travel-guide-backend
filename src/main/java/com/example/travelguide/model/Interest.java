@@ -5,6 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Entity class representing an interest.
+ */
 @Entity
 public class Interest {
 
@@ -14,18 +17,25 @@ public class Interest {
     private String name;
     private String description;
 
-    // Конструктор по умолчанию
+    /**
+     * Default constructor.
+     */
     public Interest() {
     }
 
-    // Конструктор с параметрами
+    /**
+     * Constructor with parameters.
+     * @param id the ID of the interest.
+     * @param name the name of the interest.
+     * @param description the description of the interest.
+     */
     public Interest(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    // Геттеры и сеттеры
+    // Getters and Setters
     public Long getId() {
         return id;
     }
