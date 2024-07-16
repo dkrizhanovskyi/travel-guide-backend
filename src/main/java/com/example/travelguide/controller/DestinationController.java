@@ -1,54 +1,50 @@
 package com.example.travelguide.controller;
 
-import com.example.travelguide.model.Destination;
-import com.example.travelguide.repository.DestinationRepository;
 import com.example.travelguide.exception.ResourceNotFoundException;
+import com.example.travelguide.model.Destination;
+import com.example.travelguide.service.DestinationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/destinations")
+@RequestMapping("/destinations")
 public class DestinationController {
 
     @Autowired
-    private DestinationRepository destinationRepository;
+    private DestinationService destinationService;
 
     @GetMapping
     public List<Destination> getAllDestinations() {
-        return destinationRepository.findAll();
+        return destinationService.getAllDestinations();
     }
 
     @PostMapping
-    public Destination createDestination(@RequestBody Destination destination) {
-        return destinationRepository.save(destination);
+    public ResponseEntity<Destination> createDestination(@RequestBody Destination destination) {
+        Destination createdDestination = destinationService.saveDestination(destination);
+        return new ResponseEntity<>(createdDestination, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Destination> updateDestination(@PathVariable Long id, @RequestBody Destination destinationDetails) {
-        Destination destination = destinationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination not found with id " + id));
-
-        destination.setName(destinationDetails.getName());
-        destination.setDescription(destinationDetails.getDescription());
-        destination.setImage(destinationDetails.getImage());
-
-        Destination updatedDestination = destinationRepository.save(destination);
-        return ResponseEntity.ok(updatedDestination);
+        try {
+            Destination updatedDestination = destinationService.updateDestination(id, destinationDetails);
+            return ResponseEntity.ok(updatedDestination);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Boolean>> deleteDestination(@PathVariable Long id) {
-        Destination destination = destinationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination not found with id " + id));
-
-        destinationRepository.delete(destination);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> deleteDestination(@PathVariable Long id) {
+        try {
+            destinationService.deleteDestination(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
