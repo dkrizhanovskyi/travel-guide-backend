@@ -11,6 +11,7 @@ The Travel Guide Backend is a Java-based application designed to provide backend
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Configuration](#configuration)
+- [Architecture](#architecture)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -76,6 +77,31 @@ Configuration settings are managed in `application.properties`. Key configuratio
 - Logging levels
 - Authentication settings
 
+## Architecture
+
+The architecture of the Travel Guide Backend is based on a layered architecture, including the following main components:
+
+1. **Controllers**:
+    - Handle HTTP requests and return responses.
+    - Key controllers: `DestinationController`, `UserController`, `RecommendationController`.
+
+2. **Service Layer**:
+    - Implements business logic.
+    - Key services: `DestinationService`, `UserService`, `RecommendationService`.
+
+3. **Data Access Layer**:
+    - Handles database interactions via repositories.
+    - Repositories: `DestinationRepository`, `UserRepository`, `RecommendationRepository`.
+
+4. **Models/Entities**:
+    - Define entities corresponding to database tables.
+    - Key models: `Destination`, `User`, `Recommendation`.
+
+5. **Configuration**:
+    - Application settings and configuration files like `application.properties`.
+
+For more detailed information, refer to the [Architecture Documentation](ARCHITECTURE.md).
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
@@ -90,4 +116,3 @@ Contributions are welcome! Please follow these steps:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
